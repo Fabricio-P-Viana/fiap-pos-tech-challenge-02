@@ -1,14 +1,14 @@
+import { Post } from "../../../domain/entities/Post.ts";
 import type { PostRepository } from "../../../domain/repositories/PostRepository.ts";
-import type { PostData } from "../../../domain/entities/Post.ts";
 
-export class CreatePostUseCase {
+export class SearchByWordPostUseCase {
   private postRepository: PostRepository;
 
   constructor(postRepository: PostRepository) {
     this.postRepository = postRepository;
   }
 
-  async execute(postData: PostData): Promise<any> {
-    return this.postRepository.create(postData);
+  async execute(word: string): Promise<Post[]> {
+    return this.postRepository.searchByWord(word);
   }
 }

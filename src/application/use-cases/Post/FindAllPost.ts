@@ -1,7 +1,7 @@
-import { Post } from "../../../domain/entities/Post.js";
-import type { PostRepository } from "../../../domain/repositories/PostRepository.js";
+import { Post } from "../../../domain/entities/Post.ts";
+import type { PostRepository } from "../../../domain/repositories/PostRepository.ts";
 
-export default class FindAllPostUseCase {
+export class FindAllPostUseCase {
   private postRepository: PostRepository;
 
   constructor(postRepository: PostRepository) {

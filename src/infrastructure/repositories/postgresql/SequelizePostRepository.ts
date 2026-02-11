@@ -1,7 +1,8 @@
-import { PostRepository } from "../../../domain/repositories/PostRepository.js";
-import type { PostData } from "../../../domain/entities/Post.js";
-import type { PostModel } from "../../database/models/PostModel.js";
+import { PostRepository } from "../../../domain/repositories/PostRepository.ts";
+import type { PostData } from "../../../domain/entities/Post.ts";
+import type { PostModel } from "../../database/models/PostModel.ts";
 import type { ModelStatic } from "sequelize";
+import { Op } from "sequelize";
 
 export default class SequelizePostRepository extends PostRepository {
   private postModel: ModelStatic<PostModel>;
@@ -21,6 +22,17 @@ export default class SequelizePostRepository extends PostRepository {
 
   async findById(id: number): Promise<PostModel | null> {
     return await this.postModel.findByPk(id);
+  }
+
+  async searchByWord(word: string): Promise<PostModel[]> {
+    return await this.postModel.findAll({
+      where: {
+        [Op.or]: [
+          { title: { [Op.like]: `%${word}%` } },
+          { content: { [Op.like]: `%${word}%` } },
+        ],
+      },
+    });
   }
 
   async update(

@@ -1,4 +1,4 @@
-import type { PostData } from "../entities/Post.js";
+import type { PostData } from "../entities/Post.ts";
 
 export abstract class PostRepository {
   async create(_postData: PostData): Promise<any> {
@@ -11,6 +11,10 @@ export abstract class PostRepository {
 
   async findById(_id: number): Promise<any | null> {
     throw new Error("Method findById must be implemented by subclass");
+  }
+
+  async searchByWord(_word: string): Promise<PostData[]> {
+    throw new Error("Method findByWord must be implemented by subclass");
   }
 
   async update(_id: number, _postData: Partial<PostData>): Promise<any | null> {

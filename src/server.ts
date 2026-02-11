@@ -1,8 +1,8 @@
 import express from "express";
-import PostController from "./interface-adapters/controllers/PostController.js";
-import RequestLoggerMiddleware from "./interface-adapters/middlewares/requestLogger.js";
-import ErrorHandlerMiddleware from "./interface-adapters/middlewares/errorHandler.js";
-import { sequelize } from "./infrastructure/database/sequelize.js";
+import postRoutes from "./interface-adapters/routes/postRoutes.ts";
+import RequestLoggerMiddleware from "./interface-adapters/middlewares/requestLogger.ts";
+import ErrorHandlerMiddleware from "./interface-adapters/middlewares/errorHandler.ts";
+import { sequelize } from "./infrastructure/database/sequelize.ts";
 
 class Server {
   app: express.Application;
@@ -39,10 +39,7 @@ class Server {
   }
 
   setupRoutes(): void {
-    const postController = new PostController();
-
-    this.app.post("/posts", (req, res) => postController.createPost(req, res));
-    this.app.get("/posts", (req, res) => postController.findAllPosts(req, res));
+    this.app.use("/posts", postRoutes);
   }
 
   setupErrorHandling(): void {

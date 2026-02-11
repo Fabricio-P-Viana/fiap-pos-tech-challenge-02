@@ -1,6 +1,6 @@
 import { Sequelize } from "sequelize";
-import createPostModel from "./models/PostModel.js";
-import config from "./config.js";
+import createPostModel from "./models/PostModel.ts";
+import config from "./config.ts";
 
 const sequelize = new Sequelize(
   config.database,
