@@ -21,9 +21,12 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '22'
-        run: |
-          npm run install
-          npm run test
+
+      - name: Install Dependencies
+        run: npm run install
+
+      - name: Run Tests
+        run: npm run test
 
       - name: Build and Push Docker Image
         run: |
