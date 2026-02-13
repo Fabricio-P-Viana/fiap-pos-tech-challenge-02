@@ -1,0 +1,32 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    env:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_ACESS_TOKEN: ${{ secrets.DOCKERHUB_ACESS_TOKEN }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Node.js and Run Tests
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+        run: |
+          npm run install
+          npm run test
+
+      - name: Build and Push Docker Image
+        run: |
+          echo $DOCKERHUB_ACESS_TOKEN | docker login -u $DOCKERHUB_USERNAME --password-stdin
+          docker build -t $DOCKERHUB_USERNAME/tech-challenge-02:latest  .
+          docker push $DOCKERHUB_USERNAME/tech-challenge-02:latest
