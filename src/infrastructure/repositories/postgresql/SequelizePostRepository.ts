@@ -4,11 +4,10 @@ import type { PostModel } from "../../database/models/PostModel.ts";
 import type { ModelStatic } from "sequelize";
 import { Op } from "sequelize";
 
-export default class SequelizePostRepository extends PostRepository {
+export default class SequelizePostRepository implements PostRepository {
   private postModel: ModelStatic<PostModel>;
 
   constructor(postModel: ModelStatic<PostModel>) {
-    super();
     this.postModel = postModel;
   }
 

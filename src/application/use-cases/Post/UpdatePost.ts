@@ -1,5 +1,7 @@
 import type { PostRepository } from "../../../domain/repositories/PostRepository.ts";
-import type { PostData } from "../../../domain/entities/Post.ts";
+import type { Post } from "../../../domain/entities/Post.ts";
+import type { UpdatePostDTO } from "../../dtos/Post/UpdatePostDTO.ts";
+import { PostNotFoundError } from "../../../domain/errors/PostNotFoundError.ts";
 
 export class UpdatePostUseCase {
   private postRepository: PostRepository;
@@ -8,7 +10,16 @@ export class UpdatePostUseCase {
     this.postRepository = postRepository;
   }
 
-  async execute(postId: number, postData: PostData): Promise<any> {
-    return this.postRepository.update(postId, postData);
+  async execute(postId: number, dto: UpdatePostDTO): Promise<Post> {
+    const updatedPost = await this.postRepository.update(postId, {
+      ...(dto.title !== undefined && { title: dto.title }),
+      ...(dto.content !== undefined && { content: dto.content }),
+    });
+
+    if (!updatedPost) {
+      throw new PostNotFoundError(postId);
+    }
+
+    return updatedPost;
   }
 }
