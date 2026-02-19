@@ -1,8 +1,4 @@
-import type { Request, Response } from "express";
-import { PostModel } from "../../infrastructure/database/sequelize.ts";
-import SequelizePostRepository from "../../infrastructure/repositories/postgresql/SequelizePostRepository.ts";
-
-import {
+import type {
   CreatePostUseCase,
   FindAllPostUseCase,
   UpdatePostUseCase,
@@ -10,6 +6,13 @@ import {
   FindOneByIdPostUseCase,
   SearchByWordPostUseCase,
 } from "../../application/use-cases/Post/index.ts";
+import {
+  CreatePostDTO,
+  UpdatePostDTO,
+} from "../../application/dtos/Post/index.ts";
+import { ValidationError } from "../../domain/errors/ValidationError.ts";
+import { ReqResNextFunction } from "../types/index.ts";
+import PostView from "../presenters/PostView.ts";
 
 export default class PostController {
   private createPostUseCase: CreatePostUseCase;
@@ -19,139 +22,99 @@ export default class PostController {
   private findOneByIdPostUseCase: FindOneByIdPostUseCase;
   private searchByWordPostUseCase: SearchByWordPostUseCase;
 
-  constructor() {
-    const postRepository = new SequelizePostRepository(PostModel);
-    this.createPostUseCase = new CreatePostUseCase(postRepository);
-    this.findAllPostUseCase = new FindAllPostUseCase(postRepository);
-    this.updatePostUseCase = new UpdatePostUseCase(postRepository);
-    this.deletePostUseCase = new DeletePostUseCase(postRepository);
-    this.findOneByIdPostUseCase = new FindOneByIdPostUseCase(postRepository);
-    this.searchByWordPostUseCase = new SearchByWordPostUseCase(postRepository);
+  constructor(
+    createPostUseCase: CreatePostUseCase,
+    findAllPostUseCase: FindAllPostUseCase,
+    updatePostUseCase: UpdatePostUseCase,
+    deletePostUseCase: DeletePostUseCase,
+    findOneByIdPostUseCase: FindOneByIdPostUseCase,
+    searchByWordPostUseCase: SearchByWordPostUseCase,
+  ) {
+    this.createPostUseCase = createPostUseCase;
+    this.findAllPostUseCase = findAllPostUseCase;
+    this.updatePostUseCase = updatePostUseCase;
+    this.deletePostUseCase = deletePostUseCase;
+    this.findOneByIdPostUseCase = findOneByIdPostUseCase;
+    this.searchByWordPostUseCase = searchByWordPostUseCase;
   }
 
-  async createPost(req: Request, res: Response): Promise<void> {
+  private parseId(id: string | string[]): number {
+    const idString = Array.isArray(id) ? id[0] : id;
+    const postId = parseInt(idString, 10);
+
+    if (isNaN(postId)) {
+      throw new ValidationError("Post ID must be a valid number");
+    }
+
+    return postId;
+  }
+
+  async createPost({ req, res, next }: ReqResNextFunction): Promise<void> {
     try {
-      const postData = req.body;
-      const newPost = await this.createPostUseCase.execute(postData);
-      res.status(201).json(newPost);
-    } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : "Unknown error";
-      res.status(500).json({ error: message });
+      const dto = CreatePostDTO.create(req.body);
+      const post = await this.createPostUseCase.execute(dto);
+      res.status(201).json(PostView.render(post));
+    } catch (error) {
+      next(error);
     }
   }
 
-  async findAllPosts(_req: Request, res: Response): Promise<void> {
+  async findAllPosts({ res, next }: ReqResNextFunction): Promise<void> {
     try {
       const posts = await this.findAllPostUseCase.execute();
-      res.status(200).json(posts);
-    } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : "Unknown error";
-      res.status(500).json({ error: message });
+      res.status(200).json(PostView.renderMany(posts));
+    } catch (error) {
+      next(error);
     }
   }
 
-  async findPostById(req: Request, res: Response): Promise<void> {
+  async findPostById({ req, res, next }: ReqResNextFunction): Promise<void> {
     try {
-      const { id } = req.params;
-
-      if (!id || typeof id !== "string") {
-        res.status(400).json({ error: "Post ID is required " });
-        return;
-      }
-
-      const postId = parseInt(id, 10);
-
-      if (isNaN(postId)) {
-        res.status(400).json({ error: "Post ID must be a valid number" });
-        return;
-      }
-
+      const postId = this.parseId(req.params.id);
       const post = await this.findOneByIdPostUseCase.execute(postId);
-      if (post) {
-        res.status(200).json(post);
-      } else {
-        res.status(404).json({ error: "Post not found" });
-      }
-    } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : "Unknown error";
-      res.status(500).json({ error: message });
+      res.status(200).json(PostView.render(post));
+    } catch (error) {
+      next(error);
     }
   }
 
-  async searchPostsByWord(req: Request, res: Response): Promise<void> {
+  async searchPostsByWord({
+    req,
+    res,
+    next,
+  }: ReqResNextFunction): Promise<void> {
     try {
       const { word } = req.query;
 
       if (!word || typeof word !== "string") {
-        res.status(400).json({ error: "Search word is required" });
-        return;
+        throw new ValidationError("Search word is required");
       }
 
       const posts = await this.searchByWordPostUseCase.execute(word);
-
-      if (posts.length === 0) {
-        res
-          .status(404)
-          .json({ error: "No posts found matching the search criteria" });
-        return;
-      }
-
-      res.status(200).json(posts);
-    } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : "Unknown error";
-      res.status(500).json({ error: message });
+      res.status(200).json(PostView.renderMany(posts));
+    } catch (error) {
+      next(error);
     }
   }
 
-  async updatePost(req: Request, res: Response): Promise<void> {
+  async updatePost({ req, res, next }: ReqResNextFunction): Promise<void> {
     try {
-      const postData = req.body;
-      const { id } = req.params;
-
-      if (!id || typeof id !== "string") {
-        res.status(400).json({ error: "Post ID is required " });
-        return;
-      }
-
-      const postId = parseInt(id, 10);
-
-      if (isNaN(postId)) {
-        res.status(400).json({ error: "Post ID must be a valid number" });
-        return;
-      }
-
-      const updatedPost = await this.updatePostUseCase.execute(
-        postId,
-        postData,
-      );
-      res.status(200).json(updatedPost);
-    } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : "Unknown error";
-      res.status(500).json({ error: message });
+      const postId = this.parseId(req.params.id);
+      const dto = UpdatePostDTO.create(req.body);
+      const updatedPost = await this.updatePostUseCase.execute(postId, dto);
+      res.status(200).json(PostView.render(updatedPost));
+    } catch (error) {
+      next(error);
     }
   }
 
-  async deletePost(req: Request, res: Response): Promise<void> {
+  async deletePost({ req, res, next }: ReqResNextFunction): Promise<void> {
     try {
-      const { id } = req.params;
-
-      if (!id || typeof id !== "string") {
-        res.status(400).json({ error: "Post ID is required " });
-        return;
-      }
-
-      const postId = parseInt(id, 10);
-
-      if (isNaN(postId)) {
-        res.status(400).json({ error: "Post ID must be a valid number" });
-        return;
-      }
-
+      const postId = this.parseId(req.params.id);
       await this.deletePostUseCase.execute(postId);
       res.status(204).send();
-    } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : "Unknown error";
-      res.status(500).json({ error: message });
+    } catch (error) {
+      next(error);
     }
   }
 }

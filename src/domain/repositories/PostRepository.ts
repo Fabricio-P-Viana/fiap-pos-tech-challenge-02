@@ -1,27 +1,15 @@
-import type { PostData } from "../entities/Post.ts";
+import type { Post, PostData } from "../entities/Post.ts";
 
-export abstract class PostRepository {
-  async create(_postData: PostData): Promise<any> {
-    throw new Error("Method create must be implemented by subclass");
-  }
+export interface PostRepository {
+  create(_postData: PostData): Promise<Post>;
 
-  async findAll(): Promise<any[]> {
-    throw new Error("Method findAll must be implemented by subclass");
-  }
+  findAll(): Promise<Post[]>;
 
-  async findById(_id: number): Promise<any | null> {
-    throw new Error("Method findById must be implemented by subclass");
-  }
+  findById(_id: number): Promise<Post | null>;
 
-  async searchByWord(_word: string): Promise<PostData[]> {
-    throw new Error("Method findByWord must be implemented by subclass");
-  }
+  searchByWord(_word: string): Promise<PostData[]>;
 
-  async update(_id: number, _postData: Partial<PostData>): Promise<any | null> {
-    throw new Error("Method update must be implemented by subclass");
-  }
+  update(_id: number, _postData: Partial<PostData>): Promise<Post | null>;
 
-  async delete(_id: number): Promise<boolean> {
-    throw new Error("Method delete must be implemented by subclass");
-  }
+  delete(_id: number): Promise<boolean>;
 }

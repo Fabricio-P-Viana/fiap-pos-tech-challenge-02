@@ -11,7 +11,7 @@
     "db:migrate": "npx sequelize-cli db:migrate",
     "db:migrate:undo": "npx sequelize-cli db:migrate:undo",
     "db:seed": "npx sequelize-cli db:seed:all",
-    "test": "echo \"Error: no test\" && exit 1"
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
@@ -21,12 +21,19 @@
     "express": "^5.2.1",
     "pg": "^8.17.2",
     "pg-hstore": "^2.3.4",
-    "sequelize": "^6.37.7"
+    "sequelize": "^6.37.7",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
+    "@types/jest": "^30.0.0",
     "@types/node": "^22.0.0",
+    "@types/swagger-jsdoc": "^6.0.4",
+    "@types/swagger-ui-express": "^4.1.8",
+    "jest": "^30.2.0",
     "sequelize-cli": "^6.6.5",
+    "ts-jest": "^29.4.6",
     "tsx": "^4.0.0",
     "typescript": "^5.7.0"
   }

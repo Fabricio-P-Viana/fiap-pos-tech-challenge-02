@@ -1,4 +1,5 @@
 import type { PostRepository } from "../../../domain/repositories/PostRepository.ts";
+import { PostNotFoundError } from "../../../domain/errors/PostNotFoundError.ts";
 
 export class DeletePostUseCase {
   private postRepository: PostRepository;
@@ -7,7 +8,11 @@ export class DeletePostUseCase {
     this.postRepository = postRepository;
   }
 
-  async execute(postId: number): Promise<any> {
-    return this.postRepository.delete(postId);
+  async execute(postId: number): Promise<void> {
+    const deleted = await this.postRepository.delete(postId);
+
+    if (!deleted) {
+      throw new PostNotFoundError(postId);
+    }
   }
 }

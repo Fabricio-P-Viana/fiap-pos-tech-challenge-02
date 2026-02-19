@@ -1,4 +1,4 @@
-import { Sequelize } from "sequelize";
+import { Dialect, Sequelize } from "sequelize";
 import createPostModel from "./models/PostModel.ts";
 import config from "./config.ts";
 
@@ -8,7 +8,7 @@ const sequelize = new Sequelize(
   config.password,
   {
     host: config.host,
-    dialect: config.dialect as "postgres",
+    dialect: config.dialect as Dialect,
     logging: false,
   },
 );

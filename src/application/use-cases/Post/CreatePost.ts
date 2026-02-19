@@ -1,5 +1,6 @@
 import type { PostRepository } from "../../../domain/repositories/PostRepository.ts";
-import type { PostData } from "../../../domain/entities/Post.ts";
+import type { Post } from "../../../domain/entities/Post.ts";
+import type { CreatePostDTO } from "../../dtos/Post/CreatePostDTO.ts";
 
 export class CreatePostUseCase {
   private postRepository: PostRepository;
@@ -8,7 +9,10 @@ export class CreatePostUseCase {
     this.postRepository = postRepository;
   }
 
-  async execute(postData: PostData): Promise<any> {
-    return this.postRepository.create(postData);
+  async execute(dto: CreatePostDTO): Promise<Post> {
+    return this.postRepository.create({
+      title: dto.title,
+      content: dto.content,
+    });
   }
 }
