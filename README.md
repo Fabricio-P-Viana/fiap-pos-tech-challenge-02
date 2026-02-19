@@ -19,15 +19,21 @@ Pré-requisitos
 
 Executando com Docker Compose
 
-1. copiar `.env-example` para `.env` e editar os valores caso necessário (`DB_NAME`, `DB_USER`, `DB_PASS`, `DB_HOST`).
+1. Clone o repositorio
 
-2. Suba os serviços:
+```bash
+git clone https://github.com/Fabricio-P-Viana/fiap-pos-tech-challenge-02.git
+```
+
+2. copiar `.env-example` para `.env` e editar os valores caso necessário (`DB_NAME`, `DB_USER`, `DB_PASS`, `DB_HOST`).
+
+3. Suba os serviços:
 
 ```bash
 docker-compose up -d --build
 ```
 
-3. **Atenção — primeiro uso:** crie o banco e aplique as migrations (necessário apenas na primeira execução):
+4. **Atenção — primeiro uso:** crie o banco e aplique as migrations (necessário apenas na primeira execução):
 
 Para criar o banco execute:
 
@@ -41,7 +47,7 @@ Para rodar as migrations do banco execute:
 docker-compose exec app npm run db:migrate
 ```
 
-4. Pronto é certo que esteja tudo funcionando, Acesse a API / documentação: `http://localhost:3000/api-docs`
+5. Pronto é certo que esteja tudo funcionando, Acesse a API / documentação: `http://localhost:3000/api-docs`
 
 ## Arquitetura
 
