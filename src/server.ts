@@ -5,6 +5,7 @@ import RequestLoggerMiddleware from "./interface-adapters/middlewares/requestLog
 import ErrorHandlerMiddleware from "./interface-adapters/middlewares/errorHandler.ts";
 import { sequelize } from "./infrastructure/database/sequelize.ts";
 import { swaggerSpec } from "./infrastructure/frameworks/swagger.ts";
+import metricsMiddleware from "./infrastructure/frameworks/prometheus.ts";
 
 class Server {
   app: express.Application;
@@ -41,7 +42,9 @@ class Server {
   setupMiddlewares(): void {
     this.app.use(express.json());
     this.app.use(RequestLoggerMiddleware);
+    this.app.use(metricsMiddleware);
   }
+
 
   setupRoutes(): void {
     this.app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));

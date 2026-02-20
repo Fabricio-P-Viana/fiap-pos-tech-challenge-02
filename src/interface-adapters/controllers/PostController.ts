@@ -13,6 +13,7 @@ import {
 import { ValidationError } from "../../domain/errors/ValidationError.ts";
 import { ReqResNextFunction } from "../types/index.ts";
 import PostView from "../presenters/PostView.ts";
+import * as prometheus from 'prom-client';
 
 export default class PostController {
   private createPostUseCase: CreatePostUseCase;
@@ -21,6 +22,7 @@ export default class PostController {
   private deletePostUseCase: DeletePostUseCase;
   private findOneByIdPostUseCase: FindOneByIdPostUseCase;
   private searchByWordPostUseCase: SearchByWordPostUseCase;
+  private prometheusCounter: prometheus.Counter<string>;
 
   constructor(
     createPostUseCase: CreatePostUseCase,
@@ -30,6 +32,12 @@ export default class PostController {
     findOneByIdPostUseCase: FindOneByIdPostUseCase,
     searchByWordPostUseCase: SearchByWordPostUseCase,
   ) {
+    this.prometheusCounter = new prometheus.Counter({
+      name: 'post_controller_requests_total',
+      help: 'Total number of requests to PostController',
+      labelNames: ['method', 'endpoint', 'status_code'],
+    });
+
     this.createPostUseCase = createPostUseCase;
     this.findAllPostUseCase = findAllPostUseCase;
     this.updatePostUseCase = updatePostUseCase;
@@ -53,9 +61,16 @@ export default class PostController {
     try {
       const dto = CreatePostDTO.create(req.body);
       const post = await this.createPostUseCase.execute(dto);
+
       res.status(201).json(PostView.render(post));
     } catch (error) {
       next(error);
+    } finally {
+      this.prometheusCounter.inc({
+        method: req.method,
+        endpoint: req.path,
+        status_code: res.statusCode.toString(),
+      });
     }
   }
 
@@ -65,6 +80,12 @@ export default class PostController {
       res.status(200).json(PostView.renderMany(posts));
     } catch (error) {
       next(error);
+    } finally {      
+      this.prometheusCounter.inc({
+        method: "GET",
+        endpoint: "/posts",
+        status_code: res.statusCode.toString(),
+      });
     }
   }
 
@@ -75,6 +96,12 @@ export default class PostController {
       res.status(200).json(PostView.render(post));
     } catch (error) {
       next(error);
+    } finally {
+      this.prometheusCounter.inc({
+        method: req.method,
+        endpoint: req.path,
+        status_code: res.statusCode.toString(),
+      });
     }
   }
 
@@ -94,6 +121,12 @@ export default class PostController {
       res.status(200).json(PostView.renderMany(posts));
     } catch (error) {
       next(error);
+    } finally {
+      this.prometheusCounter.inc({
+        method: req.method,
+        endpoint: req.path,
+        status_code: res.statusCode.toString(),
+      });
     }
   }
 
@@ -105,6 +138,12 @@ export default class PostController {
       res.status(200).json(PostView.render(updatedPost));
     } catch (error) {
       next(error);
+    } finally {
+      this.prometheusCounter.inc({
+        method: req.method,
+        endpoint: req.path,
+        status_code: res.statusCode.toString(),
+      });
     }
   }
 
@@ -115,6 +154,12 @@ export default class PostController {
       res.status(204).send();
     } catch (error) {
       next(error);
+    } finally {
+      this.prometheusCounter.inc({
+        method: req.method,
+        endpoint: req.path,
+        status_code: res.statusCode.toString(),
+      });
     }
-  }
+  } 
 }
