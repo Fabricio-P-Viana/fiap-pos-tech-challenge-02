@@ -41,7 +41,7 @@ services:
   grafana:
     image: grafana/grafana
     ports:
-      - "9000:9000"
+      - "9000:3000"
     networks:
       - mynetwork
     depends_on:
