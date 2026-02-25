@@ -1,7 +1,6 @@
 services:
   app:
     build: .
-    image: fabriciopereiraviana/tech-challenge-02:latest
     ports:
       - "3000:3000"
     env_file:
