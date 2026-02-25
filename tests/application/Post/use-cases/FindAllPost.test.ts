@@ -1,4 +1,4 @@
-import { FindAllPostUseCase } from "../../../../src/application/use-cases/Post/FindAllPost";
+import { FindAllPostUseCase } from "../../../../src/application/post/use-cases/FindAllPost";
 import { createMockRepository } from "../../../helpers";
 
 describe("FindAllPostUseCase", () => {

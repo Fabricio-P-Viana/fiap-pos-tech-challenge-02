@@ -9,7 +9,7 @@ import {
   DeletePostUseCase,
   FindOneByIdPostUseCase,
   SearchByWordPostUseCase,
-} from "../../application/use-cases/Post/index.ts";
+} from "../../application/post/use-cases/index.ts";
 
 const postRoutes = Router();
 

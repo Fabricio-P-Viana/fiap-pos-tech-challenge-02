@@ -1,6 +1,6 @@
 import type { PostRepository } from "../../../domain/repositories/PostRepository.ts";
 import type { Post } from "../../../domain/entities/Post.ts";
-import type { CreatePostDTO } from "../../dtos/Post/CreatePostDTO.ts";
+import type { CreatePostDTO } from "../dtos/index.ts";
 
 export class CreatePostUseCase {
   private postRepository: PostRepository;

@@ -1,5 +1,5 @@
-import { CreatePostUseCase } from "../../../../src/application/use-cases/Post/CreatePost";
-import { CreatePostDTO } from "../../../../src/application/dtos/Post/CreatePostDTO";
+import { CreatePostUseCase } from "../../../../src/application/post/use-cases/CreatePost";
+import { CreatePostDTO } from "../../../../src/application/post/dtos/CreatePostDTO";
 import { createMockRepository } from "../../../helpers";
 
 describe("CreatePostUseCase", () => {

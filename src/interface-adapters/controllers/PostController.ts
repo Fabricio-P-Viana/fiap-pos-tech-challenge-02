@@ -5,11 +5,11 @@ import type {
   DeletePostUseCase,
   FindOneByIdPostUseCase,
   SearchByWordPostUseCase,
-} from "../../application/use-cases/Post/index.ts";
+} from "../../application/post/use-cases/index.ts";
 import {
   CreatePostDTO,
   UpdatePostDTO,
-} from "../../application/dtos/Post/index.ts";
+} from "../../application/post/dtos/index.ts";
 import { ValidationError } from "../../domain/errors/ValidationError.ts";
 import { ReqResNextFunction } from "../types/index.ts";
 import PostView from "../presenters/PostView.ts";
