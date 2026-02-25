@@ -8,14 +8,10 @@ Disponível no Docker Hub
 - Pull rápido:
 
 ```bash
-docker pull fabriciopereiraviana/tech-challenge-02:tagname
+docker pull fabriciopereiraviana/tech-challenge-02:latest
 ```
 
 ## Setup inicial
-
-Pré-requisitos
-
-- `Docker Desktop`
 
 Executando com Docker Compose
 
@@ -25,7 +21,7 @@ Executando com Docker Compose
 git clone https://github.com/Fabricio-P-Viana/fiap-pos-tech-challenge-02.git
 ```
 
-2. copiar `.env-example` para `.env` e editar os valores caso necessário (`DB_NAME`, `DB_USER`, `DB_PASS`, `DB_HOST`).
+2. copiar `.env-example` para `.env` e editar os valores caso necessário (`DB_NAME`, `DB_PASS`, `DB_HOST`).
 
 3. Suba os serviços:
 
@@ -33,21 +29,10 @@ git clone https://github.com/Fabricio-P-Viana/fiap-pos-tech-challenge-02.git
 docker-compose up -d --build
 ```
 
-4. **Atenção — primeiro uso:** crie o banco e aplique as migrations (necessário apenas na primeira execução):
-
-Para criar o banco execute:
-
-```bash
-docker-compose exec app npm run db:create
-```
-
-Para rodar as migrations do banco execute:
-
-```bash
-docker-compose exec app npm run db:migrate
-```
-
-5. Pronto é certo que esteja tudo funcionando, Acesse a API / documentação: `http://localhost:3000/api-docs`
+4. Pronto é certo que esteja tudo funcionando:
+   Acesse o Swagger: `http://localhost:3000/api-docs`
+   Prometheus rodando: `http://localhost:9090/`
+   Grafana rodando: `http://localhost:9000/`
 
 ## Arquitetura
 
@@ -77,9 +62,9 @@ Testes e documentação
 
 Principais arquivos
 
-- `src/server.ts` — servidor / bootstrap
+- `src/server.ts` — servidor
 - `src/interface-adapters/routes/postRoutes.ts` — composition root / rotas
-- `src/application/use-cases/*` — regras de negócio por caso de uso
+- `src/application/{ feature }/use-cases/*` — regras de negócio por caso de uso
 - `src/infrastructure/repositories/postgresql/SequelizePostRepository.ts` — implementação do repositório
 - `src/infrastructure/database/models/PostModel.ts` — model do Sequelize
 
