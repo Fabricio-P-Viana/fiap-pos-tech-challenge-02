@@ -38,6 +38,8 @@ docker-compose up -d --build
 
 Este projeto segue a **Clean Architecture** (separação de responsabilidades em camadas) para garantir testabilidade, baixo acoplamento e facilidade de manutenção. As dependências apontam para dentro — a lógica de negócio **não** depende de frameworks ou detalhes de infraestrutura.
 
+[link diagrama](https://mermaid.ai/d/2e42e7ca-5349-4e86-a94a-8d861bd6344d)
+
 Camadas e responsabilidades
 
 - **Domain** (`src/domain`) — entidades de negócio e contratos (ex.: `Post`, `PostRepository`), regras de validação e erros de domínio.
