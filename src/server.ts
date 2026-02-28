@@ -1,11 +1,14 @@
 import express from "express";
 import swaggerUi from "swagger-ui-express";
-import postRoutes from "./interface-adapters/routes/postRoutes.ts";
+import { PostRoutes } from "./interface-adapters/routes/postRoutes.ts";
+import { UserRoutes } from "./interface-adapters/routes/userRoutes.ts";
+import { AuthRoutes } from "./interface-adapters/routes/authRoutes.ts";
 import RequestLoggerMiddleware from "./interface-adapters/middlewares/requestLogger.ts";
 import ErrorHandlerMiddleware from "./interface-adapters/middlewares/errorHandler.ts";
 import { sequelize } from "./infrastructure/database/sequelize.ts";
 import { swaggerSpec } from "./infrastructure/frameworks/swagger.ts";
 import metricsMiddleware from "./infrastructure/frameworks/prometheus.ts";
+import { JwtAuthService } from "./infrastructure/auth/services/JwtAuthService.ts";
 
 class Server {
   app: express.Application;
@@ -16,27 +19,32 @@ class Server {
     this.PORT = process.env.PORT || 3000;
   }
 
-  init(): void {
-    this.conectToDatabase();
-    this.setupMiddlewares();
-    this.setupRoutes();
-    this.setupErrorHandling();
+  async init(): Promise<void> {
+    try {
+      await this.conectToDatabase();
+      this.setupMiddlewares();
+      this.setupRoutes();
+      this.setupErrorHandling();
 
-    this.app.listen(this.PORT, () => {
-      console.log(`Server is running on port ${this.PORT}`);
-      console.log(
-        `Swagger UI available at http://localhost:${this.PORT}/api-docs`,
-      );
-    });
+      this.app.listen(this.PORT, () => {
+        console.log(`Server is running on port ${this.PORT}`);
+        console.log(
+          `Swagger UI available at http://localhost:${this.PORT}/api-docs`,
+        );
+      });
+    } catch (error) {
+      console.error("Error starting server:", error);
+    }
   }
 
-  conectToDatabase(): void {
-    sequelize
+  async conectToDatabase(): Promise<void> {
+    await sequelize
       .authenticate()
       .then(() => console.log("Database connected"))
-      .catch((err: Error) =>
-        console.error("Unable to connect to the database:", err),
-      );
+      .catch((err: Error) => {
+        console.error("Unable to connect to the database:", err);
+        throw err;
+      });
   }
 
   setupMiddlewares(): void {
@@ -45,10 +53,16 @@ class Server {
     this.app.use(metricsMiddleware);
   }
 
-
   setupRoutes(): void {
+    const authService = new JwtAuthService();
+    const postRoutes = new PostRoutes(authService).getRouter();
+    const userRoutes = new UserRoutes(authService).getRouter();
+    const authRoutes = new AuthRoutes().getRouter();
+
     this.app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
     this.app.use("/posts", postRoutes);
+    this.app.use("/users", userRoutes);
+    this.app.use("/auth", authRoutes);
   }
 
   setupErrorHandling(): void {
@@ -58,4 +72,4 @@ class Server {
 
 const server = new Server();
 
-server.init();
+await server.init();

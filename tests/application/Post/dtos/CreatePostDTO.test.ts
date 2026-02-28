@@ -8,6 +8,7 @@ describe("CreatePostDTO", () => {
       const data = {
         title: " Meu título ",
         content: " Meu conteúdo ",
+        authorId: 1,
       };
 
       // Act

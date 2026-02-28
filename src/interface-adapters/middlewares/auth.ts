@@ -1,21 +1,26 @@
-import type { Request, Response, NextFunction } from "express";
+import {
+  AuthService,
+  TokenPayload,
+} from "../../domain/services/AuthService.ts";
 
-export default function AuthMiddleware(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): void {
-  const authHeader = req.headers["authorization"];
-  if (!authHeader) {
-    res.status(401).json({ error: "No token provided" });
-    return;
-  }
+import { Request, Response, NextFunction } from "express";
 
-  const token = authHeader.split(" ")[1];
-  if (token !== "valid-token") {
-    res.status(403).json({ error: "Invalid token" });
-    return;
-  }
+export const authMiddleware = (authService: AuthService) => {
+  return async (req: Request, res: Response, next: NextFunction) => {
+    const authHeader = req.headers["authorization"];
+    const token = authHeader?.replace("Bearer ", "");
 
-  next();
-}
+    if (!token) {
+      return res.status(401).json({ error: "Token not provided" });
+    }
+
+    const payload = authService.verifyToken(token);
+    if (!payload) {
+      return res.status(401).json({ error: "Invalid token" });
+    }
+
+    // Adiciona usuário ao request para uso posterior
+    req.user = payload;
+    next();
+  };
+};

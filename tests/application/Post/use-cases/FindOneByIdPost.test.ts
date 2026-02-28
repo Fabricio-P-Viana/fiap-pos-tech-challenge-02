@@ -12,6 +12,7 @@ describe("FindOneByIdPostUseCase", () => {
       id: 1,
       title: "Test Post",
       content: "This is a test post.",
+      authorId: 1,
     };
 
     mockRepo.findById.mockResolvedValue(postMock);

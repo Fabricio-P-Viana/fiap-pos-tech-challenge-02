@@ -8,8 +8,22 @@ describe("FindAllPostUseCase", () => {
     const useCase = new FindAllPostUseCase(mockRepo);
 
     const fakePosts = [
-      { id: 1, title: "Post 1", content: "Conteúdo 1" },
-      { id: 2, title: "Post 2", content: "Conteúdo 2" },
+      {
+        id: 1,
+        title: "Post 1",
+        content: "Conteúdo 1",
+        authorId: 1,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id: 2,
+        title: "Post 2",
+        content: "Conteúdo 2",
+        authorId: 1,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
     ];
     mockRepo.findAll.mockResolvedValue(fakePosts);
 

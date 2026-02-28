@@ -4,12 +4,14 @@ export interface PostAttributes {
   id?: number;
   title: string;
   content: string;
+  authorId: number;
 }
 
 export class PostModel extends Model<PostAttributes> implements PostAttributes {
   declare id: number;
   declare title: string;
   declare content: string;
+  declare authorId: number;
   declare readonly createdAt: Date;
   declare readonly updatedAt: Date;
 }
@@ -31,6 +33,14 @@ export default function createPostModel(
       content: {
         type: DataTypes.TEXT,
         allowNull: false,
+      },
+      authorId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: "users",
+          key: "id",
+        },
       },
     },
     {
