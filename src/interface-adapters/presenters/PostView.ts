@@ -4,6 +4,7 @@ interface PostViewData {
   id?: number | string | undefined;
   title: string;
   content: string;
+  authorId: number;
   createdAt: Date | undefined;
   updatedAt: Date | undefined;
 }
@@ -14,6 +15,7 @@ export default class PostView {
       id: post.id,
       title: post.title,
       content: post.content,
+      authorId: post.authorId,
       createdAt: post.createdAt,
       updatedAt: post.updatedAt,
     };

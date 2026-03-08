@@ -1,0 +1,58 @@
+export enum UserRole {
+  TEACHER = "TEACHER",
+  STUDENT = "STUDENT",
+}
+
+export interface UserData {
+  id?: number;
+  name: string;
+  email: string;
+  password: string;
+  role?: UserRole;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export class User {
+  id?: number;
+  name: string;
+  email: string;
+  password: string;
+  role?: UserRole;
+  createdAt?: Date;
+  updatedAt?: Date;
+
+  constructor({
+    id,
+    createdAt,
+    name,
+    email,
+    password,
+    role,
+    updatedAt,
+  }: UserData) {
+    this.id = id;
+    this.name = name;
+    this.email = email;
+    this.password = password;
+    this.role = role;
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
+  }
+
+  isTeacher(): boolean {
+    return this.role === UserRole.TEACHER;
+  }
+
+  canModifyPost(postAuthorId: number): boolean {
+    return this.isTeacher() && this.id === postAuthorId;
+  }
+
+  canModifyUser(targetUserId: number): boolean {
+    return this.isTeacher() || this.isMe(targetUserId);
+  }
+
+  isMe(userId: number): boolean {
+    return this.id === userId;
+  }
+}

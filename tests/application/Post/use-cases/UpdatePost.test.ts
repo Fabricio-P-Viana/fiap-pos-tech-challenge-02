@@ -17,18 +17,20 @@ describe("UpdatePostUseCase", () => {
 
     const dto = UpdatePostDTO.create(dataToUpdate);
 
-    const post: Post = {
+    const post = {
       id: 1,
       title: dto.title as string,
       content: dto.content as string,
+      authorId: 1,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
 
+    mockRepo.findById.mockResolvedValue(post);
     mockRepo.update.mockResolvedValue(post);
 
     // Act
-    const result = await useCase.execute(post.id as number, dto);
+    const result = await useCase.execute(post.id as number, dto, post.authorId);
 
     // Assert
     expect(mockRepo.update).toHaveBeenCalledTimes(1);
@@ -52,6 +54,7 @@ describe("UpdatePostUseCase", () => {
       id: 1,
       title: dto.title as string,
       content: dto.content as string,
+      authorId: 1,
       createdAt: new Date(),
       updatedAt: new Date(),
     };

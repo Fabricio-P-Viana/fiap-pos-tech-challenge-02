@@ -13,7 +13,7 @@ import {
 import { ValidationError } from "../../domain/errors/ValidationError.ts";
 import { ReqResNextFunction } from "../types/index.ts";
 import PostView from "../presenters/PostView.ts";
-import * as prometheus from 'prom-client';
+import * as prometheus from "prom-client";
 
 export default class PostController {
   private createPostUseCase: CreatePostUseCase;
@@ -33,9 +33,9 @@ export default class PostController {
     searchByWordPostUseCase: SearchByWordPostUseCase,
   ) {
     this.prometheusCounter = new prometheus.Counter({
-      name: 'post_controller_requests_total',
-      help: 'Total number of requests to PostController',
-      labelNames: ['method', 'endpoint', 'status_code'],
+      name: "post_controller_requests_total",
+      help: "Total number of requests to PostController",
+      labelNames: ["method", "endpoint", "status_code"],
     });
 
     this.createPostUseCase = createPostUseCase;
@@ -59,7 +59,11 @@ export default class PostController {
 
   async createPost({ req, res, next }: ReqResNextFunction): Promise<void> {
     try {
-      const dto = CreatePostDTO.create(req.body);
+      const dto = CreatePostDTO.create({
+        ...req.body,
+        authorId: req?.user?.userId,
+      });
+
       const post = await this.createPostUseCase.execute(dto);
 
       res.status(201).json(PostView.render(post));
@@ -80,7 +84,7 @@ export default class PostController {
       res.status(200).json(PostView.renderMany(posts));
     } catch (error) {
       next(error);
-    } finally {      
+    } finally {
       this.prometheusCounter.inc({
         method: "GET",
         endpoint: "/posts",
@@ -134,7 +138,12 @@ export default class PostController {
     try {
       const postId = this.parseId(req.params.id);
       const dto = UpdatePostDTO.create(req.body);
-      const updatedPost = await this.updatePostUseCase.execute(postId, dto);
+      const userId = req?.user?.userId;
+      const updatedPost = await this.updatePostUseCase.execute(
+        postId,
+        dto,
+        userId,
+      );
       res.status(200).json(PostView.render(updatedPost));
     } catch (error) {
       next(error);
@@ -161,5 +170,5 @@ export default class PostController {
         status_code: res.statusCode.toString(),
       });
     }
-  } 
+  }
 }

@@ -10,8 +10,18 @@ describe("SearchByWordPostUseCase", () => {
 
     const searchWord = "test";
     const matchingPosts: Post[] = [
-      { id: 1, title: "Test Post", content: "This is a test post." },
-      { id: 2, title: "Another Test", content: "Testing is important." },
+      {
+        id: 1,
+        title: "Test Post",
+        content: "This is a test post.",
+        authorId: 0,
+      },
+      {
+        id: 2,
+        title: "Another Test",
+        content: "Testing is important.",
+        authorId: 0,
+      },
     ];
 
     mockRepo.searchByWord.mockResolvedValue(matchingPosts);

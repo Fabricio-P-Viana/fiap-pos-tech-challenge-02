@@ -52,6 +52,17 @@ services:
       - mynetwork
     depends_on:
       - prometheus
+  pgAdmin:
+    image: dpage/pgadmin4
+    ports:
+      - "8080:80"
+    env_file:
+      - ./.env
+    networks:
+      - mynetwork
+    depends_on:
+      db:
+        condition: service_healthy
 
 networks:
   mynetwork:

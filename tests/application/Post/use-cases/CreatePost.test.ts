@@ -11,11 +11,14 @@ describe("CreatePostUseCase", () => {
     const dto = CreatePostDTO.create({
       title: "Novo Post",
       content: "Conteúdo do post",
+      authorId: 1,
     });
+
     const fakeCreatedPost = {
       id: 1,
       title: dto.title,
       content: dto.content,
+      authorId: dto.authorId,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -26,10 +29,7 @@ describe("CreatePostUseCase", () => {
     const result = await useCase.execute(dto);
 
     // Assert
-    expect(mockRepo.create).toHaveBeenCalledWith({
-      title: dto.title,
-      content: dto.content,
-    });
+    expect(mockRepo.create).toHaveBeenCalledWith(dto);
     expect(mockRepo.create).toHaveBeenCalledTimes(1);
     expect(result).toEqual(fakeCreatedPost);
   });
@@ -39,7 +39,11 @@ describe("CreatePostUseCase", () => {
     const mockRepo = createMockRepository();
     const useCase = new CreatePostUseCase(mockRepo);
 
-    const dto = CreatePostDTO.create({ title: "Post", content: "Conteúdo" });
+    const dto = CreatePostDTO.create({
+      title: "Post",
+      content: "Conteúdo",
+      authorId: 1,
+    });
     mockRepo.create.mockRejectedValue(new Error("Erro ao criar post"));
 
     // Act & Assert

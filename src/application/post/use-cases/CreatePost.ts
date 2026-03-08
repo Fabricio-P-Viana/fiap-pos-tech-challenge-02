@@ -13,6 +13,7 @@ export class CreatePostUseCase {
     return this.postRepository.create({
       title: dto.title,
       content: dto.content,
+      authorId: dto.authorId,
     });
   }
 }

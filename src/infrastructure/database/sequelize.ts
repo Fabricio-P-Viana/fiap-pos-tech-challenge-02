@@ -1,5 +1,6 @@
 import { Dialect, Sequelize } from "sequelize";
 import createPostModel from "./models/PostModel.ts";
+import createUserModel from "./models/UserModel.ts";
 import config from "./config.ts";
 
 const sequelize = new Sequelize(
@@ -14,5 +15,6 @@ const sequelize = new Sequelize(
 );
 
 const PostModel = createPostModel(sequelize);
+const UserModel = createUserModel(sequelize);
 
-export { sequelize, PostModel };
+export { sequelize, PostModel, UserModel };

@@ -1,6 +1,9 @@
 import type { Request, Response, NextFunction } from "express";
 import { ValidationError } from "../../domain/errors/ValidationError.ts";
 import { PostNotFoundError } from "../../domain/errors/PostNotFoundError.ts";
+import { UserNotFoundError } from "../../domain/errors/UserNotFoundError.ts";
+import { InvalidCredentialsError } from "../../domain/errors/InvalidCredentialsError.ts";
+import { UnauthorizedError } from "../../domain/errors/UnauthorizedError.ts";
 
 export default function ErrorHandlerMiddleware(
   err: Error,
@@ -13,7 +16,17 @@ export default function ErrorHandlerMiddleware(
     return;
   }
 
-  if (err instanceof PostNotFoundError) {
+  if (err instanceof InvalidCredentialsError) {
+    res.status(401).json({ error: err.message });
+    return;
+  }
+
+  if (err instanceof UnauthorizedError) {
+    res.status(403).json({ error: err.message });
+    return;
+  }
+
+  if (err instanceof PostNotFoundError || err instanceof UserNotFoundError) {
     res.status(404).json({ error: err.message });
     return;
   }
