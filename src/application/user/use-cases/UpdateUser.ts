@@ -3,6 +3,7 @@ import type { User } from "../../../domain/entities/User.ts";
 import type { UpdateUserDTO } from "../dtos/index.ts";
 import { UserNotFoundError } from "../../../domain/errors/UserNotFoundError.ts";
 import { UnauthorizedError } from "../../../domain/errors/UnauthorizedError.ts";
+import { ValidationError } from "../../../domain/errors/ValidationError.ts";
 import { AuthService } from "../../../domain/services/AuthService.ts";
 
 export class UpdateUserUseCase {
@@ -21,12 +22,22 @@ export class UpdateUserUseCase {
   ): Promise<User> {
     const user = await this.userRepository.findById(userId);
 
+    if (currentUserId) {
+      const currentUser = await this.userRepository.findById(currentUserId);
+      if (!currentUser || !currentUser.canModifyUser(userId)) {
+        throw new UnauthorizedError(userId);
+      }
+    }
+
     if (!user) {
       throw new UserNotFoundError(userId);
     }
 
-    if (currentUserId && user.isMe(currentUserId) && !user.isTeacher()) {
-      throw new UnauthorizedError(userId);
+    if (dto.email !== undefined && dto.email !== user.email) {
+      const existingUser = await this.userRepository.findByEmail(dto.email);
+      if (existingUser) {
+        throw new ValidationError("Email already in use");
+      }
     }
 
     const updated = await this.userRepository.update(user.id as number, {

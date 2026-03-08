@@ -167,7 +167,6 @@ export class UserRoutes {
     this.userRoutes.put(
       "/:id",
       authMiddleware(this.authService),
-      authorize(UserRole.TEACHER),
       (req, res, next) => this.userController.updateUser({ req, res, next }),
     );
 
@@ -199,7 +198,6 @@ export class UserRoutes {
     this.userRoutes.delete(
       "/:id",
       authMiddleware(this.authService),
-      authorize(UserRole.TEACHER),
       (req, res, next) => this.userController.deleteUser({ req, res, next }),
     );
 

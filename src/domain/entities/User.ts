@@ -48,6 +48,10 @@ export class User {
     return this.isTeacher() && this.id === postAuthorId;
   }
 
+  canModifyUser(targetUserId: number): boolean {
+    return this.isTeacher() || this.isMe(targetUserId);
+  }
+
   isMe(userId: number): boolean {
     return this.id === userId;
   }
