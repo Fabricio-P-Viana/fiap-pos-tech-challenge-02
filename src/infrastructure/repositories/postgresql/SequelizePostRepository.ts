@@ -26,10 +26,10 @@ export default class SequelizePostRepository implements PostRepository {
   async searchByWord(word: string): Promise<PostModel[]> {
     return await this.postModel.findAll({
       where: {
-        [Op.or]: [
-          { title: { [Op.like]: `%${word}%` } },
-          { content: { [Op.like]: `%${word}%` } },
-        ],
+      [Op.or]: [
+        { title: { [Op.iLike]: `%${word}%` } },
+        { content: { [Op.iLike]: `%${word}%` } },
+      ],
       },
     });
   }
