@@ -17,6 +17,10 @@ const swaggerDefinition = {
       url: "http://localhost:3000",
       description: "Servidor de desenvolvimento",
     },
+    {
+      url: "https://tech-challenge-02-latest.onrender.com/",
+      description: "Servidor de produção",
+    },
   ],
   components: {
     securitySchemes: {

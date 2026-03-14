@@ -73,17 +73,18 @@ docker-compose up -d --build
 
 ## Variáveis de ambiente
 
-| Variável                   | Descrição                            | Exemplo              |
-| -------------------------- | ------------------------------------ | -------------------- |
-| `DB_NAME`                  | Nome do banco de dados               | `blog`               |
-| `DB_USER`                  | Usuário do PostgreSQL                | `postgres`           |
-| `DB_PASS`                  | Senha do PostgreSQL                  | `postgres`           |
-| `DB_HOST`                  | Host do banco de dados               | `db`                 |
-| `DB_PORT`                  | Porta do banco de dados              | `5432`               |
-| `POSTGRES_PASSWORD`        | Senha root do container Postgres     | `postgres`           |
-| `JWT_SECRET`               | Segredo para assinar tokens JWT      | `meu_segredo`        |
-| `PGADMIN_DEFAULT_EMAIL`    | Email Default para acessar o pgAdmin | `postgres@email.com` |
-| `PGADMIN_DEFAULT_PASSWORD` | Senha Default para acessar o pgAdmin | `postgres`           |
+| Variável                   | Descrição                                          | Exemplo                                             |
+| -------------------------- | -------------------------------------------------- | --------------------------------------------------- |
+| `DB_NAME`                  | Nome do banco de dados                             | `blog`                                              |
+| `DB_USER`                  | Usuário do PostgreSQL                              | `postgres`                                          |
+| `DB_PASS`                  | Senha do PostgreSQL                                | `postgres`                                          |
+| `DB_HOST`                  | Host do banco de dados                             | `db`                                                |
+| `DB_PORT`                  | Porta do banco de dados                            | `5432`                                              |
+| `POSTGRES_PASSWORD`        | Senha root do container Postgres                   | `postgres`                                          |
+| `JWT_SECRET`               | Segredo para assinar tokens JWT                    | `meu_segredo`                                       |
+| `PGADMIN_DEFAULT_EMAIL`    | Email Default para acessar o pgAdmin               | `postgres@email.com`                                |
+| `PGADMIN_DEFAULT_PASSWORD` | Senha Default para acessar o pgAdmin               | `postgres`                                          |
+| `CORS_ORIGIN`              | Origens permitidas no CORS (separadas por vírgula) | `https://meu-front.com,https://admin.meu-front.com` |
 
 ---
 

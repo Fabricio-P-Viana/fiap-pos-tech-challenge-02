@@ -8,6 +8,7 @@ import ErrorHandlerMiddleware from "./interface-adapters/middlewares/errorHandle
 import { sequelize } from "./infrastructure/database/sequelize.ts";
 import { swaggerSpec } from "./infrastructure/frameworks/swagger.ts";
 import metricsMiddleware from "./infrastructure/frameworks/prometheus.ts";
+import corsMiddleware from "./infrastructure/frameworks/cors.ts";
 import { JwtAuthService } from "./infrastructure/auth/services/JwtAuthService.ts";
 
 class Server {
@@ -48,6 +49,7 @@ class Server {
   }
 
   setupMiddlewares(): void {
+    this.app.use(corsMiddleware);
     this.app.use(express.json());
     this.app.use(RequestLoggerMiddleware);
     this.app.use(metricsMiddleware);
