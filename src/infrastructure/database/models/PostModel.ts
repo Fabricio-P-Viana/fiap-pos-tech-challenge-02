@@ -1,4 +1,11 @@
-import { DataTypes, Model, Sequelize, type ModelStatic } from "sequelize";
+import {
+  DataTypes,
+  Model,
+  Sequelize,
+  type ModelStatic,
+  type NonAttribute,
+} from "sequelize";
+import type { UserModel } from "./UserModel.ts";
 
 export interface PostAttributes {
   id?: number;
@@ -12,6 +19,7 @@ export class PostModel extends Model<PostAttributes> implements PostAttributes {
   declare title: string;
   declare content: string;
   declare authorId: number;
+  declare author?: NonAttribute<Pick<UserModel, "name">>;
   declare readonly createdAt: Date;
   declare readonly updatedAt: Date;
 }
