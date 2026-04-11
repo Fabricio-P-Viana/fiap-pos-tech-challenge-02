@@ -1,15 +1,16 @@
 import express from "express";
-import swaggerUi from "swagger-ui-express";
+import { apiReference } from "@scalar/express-api-reference";
 import { PostRoutes } from "./interface-adapters/routes/postRoutes.ts";
 import { UserRoutes } from "./interface-adapters/routes/userRoutes.ts";
 import { AuthRoutes } from "./interface-adapters/routes/authRoutes.ts";
 import RequestLoggerMiddleware from "./interface-adapters/middlewares/requestLogger.ts";
 import ErrorHandlerMiddleware from "./interface-adapters/middlewares/errorHandler.ts";
 import { sequelize } from "./infrastructure/database/sequelize.ts";
-import { swaggerSpec } from "./infrastructure/frameworks/swagger.ts";
 import metricsMiddleware from "./infrastructure/frameworks/prometheus.ts";
 import corsMiddleware from "./infrastructure/frameworks/cors.ts";
 import { JwtAuthService } from "./infrastructure/auth/services/JwtAuthService.ts";
+import { swaggerSpec } from "./infrastructure/frameworks/swagger.ts";
+import { ApiReferenceConfiguration } from "@scalar/api-reference";
 
 class Server {
   app: express.Application;
@@ -61,10 +62,23 @@ class Server {
     const userRoutes = new UserRoutes(authService).getRouter();
     const authRoutes = new AuthRoutes().getRouter();
 
-    this.app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+    this.setupDocsRoute();
+
     this.app.use("/posts", postRoutes);
     this.app.use("/users", userRoutes);
     this.app.use("/auth", authRoutes);
+  }
+
+  setupDocsRoute(): void {
+    this.app.use(
+      "/api-docs",
+      apiReference({
+        spec: {
+          content: swaggerSpec,
+        },
+      } as Partial<ApiReferenceConfiguration>)
+    );
+    
   }
 
   setupErrorHandling(): void {
