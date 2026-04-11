@@ -16,21 +16,67 @@ export default class SequelizePostRepository implements PostRepository {
   }
 
   async findAll(): Promise<PostModel[]> {
-    return await this.postModel.findAll();
+    return await this.postModel.findAll({
+      attributes: [
+        "id",
+        "title",
+        "content",
+        "authorId",
+        "createdAt",
+        "updatedAt",
+      ],
+      include: [
+        {
+          association: "author",
+          attributes: ["name"],
+        },
+      ],
+      order: [["createdAt", "DESC"]],
+    });
   }
 
   async findById(id: number): Promise<PostModel | null> {
-    return await this.postModel.findByPk(id);
+    return await this.postModel.findByPk(id, {
+      attributes: [
+        "id",
+        "title",
+        "content",
+        "authorId",
+        "createdAt",
+        "updatedAt",
+      ],
+      include: [
+        {
+          association: "author",
+          attributes: ["name"],
+        },
+      ],
+    });
   }
 
   async searchByWord(word: string): Promise<PostModel[]> {
     return await this.postModel.findAll({
-      where: {
-      [Op.or]: [
-        { title: { [Op.iLike]: `%${word}%` } },
-        { content: { [Op.iLike]: `%${word}%` } },
+      attributes: [
+        "id",
+        "title",
+        "content",
+        "authorId",
+        "createdAt",
+        "updatedAt",
       ],
+      include: [
+        {
+          association: "author",
+          attributes: ["name"],
+        },
+      ],
+      where: {
+        [Op.or]: [
+          { title: { [Op.iLike]: `%${word}%` } },
+          { content: { [Op.iLike]: `%${word}%` } },
+        ],
       },
+      order: [["createdAt", "DESC"]],
     });
   }
 

@@ -1,8 +1,13 @@
+export interface PostAuthor {
+  name: string;
+}
+
 export interface PostData {
   id?: number;
   title: string;
   content: string;
   authorId: number;
+  author?: PostAuthor;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -12,6 +17,7 @@ export class Post {
   title: string;
   content: string;
   authorId: number;
+  author?: PostAuthor;
   createdAt?: Date;
   updatedAt?: Date;
 
@@ -20,6 +26,7 @@ export class Post {
     title,
     content,
     authorId,
+    author,
     createdAt,
     updatedAt,
   }: PostData) {
@@ -27,6 +34,7 @@ export class Post {
     this.title = title;
     this.content = content;
     this.authorId = authorId;
+    this.author = author;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
   }

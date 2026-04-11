@@ -15,7 +15,11 @@ const swaggerDefinition = {
   servers: [
     {
       url: "http://localhost:3000",
-      description: "Servidor de desenvolvimento",
+      description: "Servidor do frontend",
+    },
+    {
+      url: "http://localhost:3001",
+      description: "Servidor do backend",
     },
     {
       url: "https://tech-challenge-02-latest.onrender.com/",
@@ -37,6 +41,12 @@ const swaggerDefinition = {
           id: { type: "integer", example: 1 },
           title: { type: "string", example: "Meu primeiro post" },
           content: { type: "string", example: "Conteúdo do post aqui..." },
+          author: {
+            type: "object",
+            properties: {
+              name: { type: "string", example: "Fulano" },
+            },
+          },
           createdAt: {
             type: "string",
             format: "date-time",

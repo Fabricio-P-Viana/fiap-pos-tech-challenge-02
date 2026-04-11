@@ -7,7 +7,7 @@ export interface PostRepository {
 
   findById(_id: number): Promise<Post | null>;
 
-  searchByWord(_word: string): Promise<PostData[]>;
+  searchByWord(_word: string): Promise<Post[]>;
 
   update(_id: number, _postData: Partial<PostData>): Promise<Post | null>;
 

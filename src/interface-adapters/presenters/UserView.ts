@@ -1,27 +1,11 @@
 import { User } from "../../domain/entities/User.ts";
 
-interface UserViewData {
-  id?: number | string | undefined;
-  name: string;
-  email: string;
-  role?: string | undefined;
-  createdAt: Date | undefined;
-  updatedAt: Date | undefined;
-}
-
 export default class UserView {
-  static render(user: User): UserViewData {
-    return {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
-    };
+  static render<T extends User>(user: T): T {
+    return user;
   }
 
-  static renderMany(users: User[]): UserViewData[] {
+  static renderMany<T extends User>(users: T[]): T[] {
     return users.map(this.render);
   }
 }

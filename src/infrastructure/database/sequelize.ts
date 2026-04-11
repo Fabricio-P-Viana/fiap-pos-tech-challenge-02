@@ -19,4 +19,16 @@ const sequelize = config.url
 const PostModel = createPostModel(sequelize);
 const UserModel = createUserModel(sequelize);
 
+PostModel.belongsTo(UserModel, {
+  as: "author",
+  foreignKey: "authorId",
+  targetKey: "id",
+});
+
+UserModel.hasMany(PostModel, {
+  as: "posts",
+  foreignKey: "authorId",
+  sourceKey: "id",
+});
+
 export { sequelize, PostModel, UserModel };
