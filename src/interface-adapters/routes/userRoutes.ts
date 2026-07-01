@@ -8,6 +8,8 @@ import {
   UpdateUserUseCase,
   DeleteUserUseCase,
   FindOneByIdUserUseCase,
+  FindUsersByRoleUseCase,
+  CreateTeacherUseCase,
 } from "../../application/user/use-cases/index.ts";
 import { AuthService } from "../../domain/services/AuthService.ts";
 import { authMiddleware } from "../middlewares/auth.ts";
@@ -34,6 +36,8 @@ export class UserRoutes {
       new UpdateUserUseCase(this.repository, this.authService),
       new DeleteUserUseCase(this.repository),
       new FindOneByIdUserUseCase(this.repository),
+      new FindUsersByRoleUseCase(this.repository),
+      new CreateTeacherUseCase(this.repository, this.authService),
     );
   }
 
@@ -68,6 +72,44 @@ export class UserRoutes {
 
     /**
      * @swagger
+     * /users/teachers:
+     *   post:
+     *     tags: [User]
+     *     summary: Criar um novo professor
+     *     security:
+     *     - bearerAuth: []
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             $ref: '#/components/schemas/UserInput'
+     *     responses:
+     *       201:
+     *         description: Professor criado com sucesso
+     *         content:
+     *           application/json:
+     *             schema:
+     *               $ref: '#/components/schemas/User'
+     *       400:
+     *         description: Dados inválidos
+     *       401:
+     *         description: Token não fornecido ou inválido
+     *       403:
+     *         description: Sem permissão para criar professores
+     *       500:
+     *         description: Erro interno do servidor
+     */
+    this.userRoutes.post(
+      "/teachers",
+      authMiddleware(this.authService),
+      authorize(UserRole.TEACHER),
+      (req, res, next) =>
+        this.userController.createTeacher({ req, res, next }),
+    );
+
+    /**
+     * @swagger
      * /users:
      *   get:
      *     tags: [User]
@@ -91,6 +133,48 @@ export class UserRoutes {
       authMiddleware(this.authService),
       authorize(UserRole.TEACHER),
       (req, res, next) => this.userController.findAllUsers({ req, res, next }),
+    );
+
+    /**
+     * @swagger
+     * /users/role:
+     *   get:
+     *     tags: [User]
+     *     summary: Buscar usuários por role (TEACHER ou STUDENT)
+     *     parameters:
+     *       - in: query
+     *         name: role
+     *         required: true
+     *         schema:
+     *           type: string
+     *           enum: [TEACHER, STUDENT]
+     *         description: Role utilizada para filtrar os usuários
+     *     security:
+     *     - bearerAuth: []
+     *     responses:
+     *       200:
+     *         description: Lista de usuários com a role informada
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: array
+     *               items:
+     *                 $ref: '#/components/schemas/User'
+     *       400:
+     *         description: Parâmetro "role" é obrigatório ou inválido
+     *       401:
+     *         description: Token não fornecido ou inválido
+     *       403:
+     *         description: Sem permissão para listar usuários
+     *       500:
+     *         description: Erro interno do servidor
+     */
+    this.userRoutes.get(
+      "/role",
+      authMiddleware(this.authService),
+      authorize(UserRole.TEACHER),
+      (req, res, next) =>
+        this.userController.findUsersByRole({ req, res, next }),
     );
 
     /**

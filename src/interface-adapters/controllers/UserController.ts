@@ -4,12 +4,15 @@ import type {
   UpdateUserUseCase,
   DeleteUserUseCase,
   FindOneByIdUserUseCase,
+  FindUsersByRoleUseCase,
+  CreateTeacherUseCase,
 } from "../../application/user/use-cases/index.ts";
 import {
   CreateUserDTO,
   UpdateUserDTO,
 } from "../../application/user/dtos/index.ts";
 import { ValidationError } from "../../domain/errors/ValidationError.ts";
+import { UserRole } from "../../domain/entities/User.ts";
 import { ReqResNextFunction } from "../types/index.ts";
 import UserView from "../presenters/UserView.ts";
 import * as prometheus from "prom-client";
@@ -20,6 +23,8 @@ export default class UserController {
   private updateUserUseCase: UpdateUserUseCase;
   private deleteUserUseCase: DeleteUserUseCase;
   private findOneByIdUserUseCase: FindOneByIdUserUseCase;
+  private findUsersByRoleUseCase: FindUsersByRoleUseCase;
+  private createTeacherUseCase: CreateTeacherUseCase;
   private prometheusCounter: prometheus.Counter<string>;
 
   constructor(
@@ -28,6 +33,8 @@ export default class UserController {
     updateUserUseCase: UpdateUserUseCase,
     deleteUserUseCase: DeleteUserUseCase,
     findOneByIdUserUseCase: FindOneByIdUserUseCase,
+    findUsersByRoleUseCase: FindUsersByRoleUseCase,
+    createTeacherUseCase: CreateTeacherUseCase,
   ) {
     this.prometheusCounter = new prometheus.Counter({
       name: "user_controller_requests_total",
@@ -40,6 +47,8 @@ export default class UserController {
     this.updateUserUseCase = updateUserUseCase;
     this.deleteUserUseCase = deleteUserUseCase;
     this.findOneByIdUserUseCase = findOneByIdUserUseCase;
+    this.findUsersByRoleUseCase = findUsersByRoleUseCase;
+    this.createTeacherUseCase = createTeacherUseCase;
   }
 
   private parseId(id: string | string[]): number {
@@ -59,6 +68,56 @@ export default class UserController {
       const user = await this.createUserUseCase.execute(dto);
 
       res.status(201).json(UserView.render(user));
+    } catch (error) {
+      next(error);
+    } finally {
+      this.prometheusCounter.inc({
+        method: req.method,
+        endpoint: req.path,
+        status_code: res.statusCode.toString(),
+      });
+    }
+  }
+
+  async createTeacher({ req, res, next }: ReqResNextFunction): Promise<void> {
+    try {
+      const dto = CreateUserDTO.create(req.body);
+      const teacher = await this.createTeacherUseCase.execute(dto);
+
+      res.status(201).json(UserView.render(teacher));
+    } catch (error) {
+      next(error);
+    } finally {
+      this.prometheusCounter.inc({
+        method: req.method,
+        endpoint: req.path,
+        status_code: res.statusCode.toString(),
+      });
+    }
+  }
+
+  async findUsersByRole({
+    req,
+    res,
+    next,
+  }: ReqResNextFunction): Promise<void> {
+    try {
+      const { role } = req.query;
+
+      if (!role || typeof role !== "string") {
+        throw new ValidationError("Role is required");
+      }
+
+      if (!Object.values(UserRole).includes(role as UserRole)) {
+        throw new ValidationError(
+          `Role must be one of: ${Object.values(UserRole).join(", ")}`,
+        );
+      }
+
+      const users = await this.findUsersByRoleUseCase.execute(
+        role as UserRole,
+      );
+      res.status(200).json(UserView.renderMany(users));
     } catch (error) {
       next(error);
     } finally {

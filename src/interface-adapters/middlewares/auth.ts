@@ -14,7 +14,11 @@ export const authMiddleware = (authService: AuthService) => {
       return res.status(401).json({ error: "Token not provided" });
     }
 
+    //console.log(`Verifying token: ${token}`);
+
     const payload = authService.verifyToken(token);
+
+    //console.log(`Token payload: ${JSON.stringify(payload)}`);
     if (!payload) {
       return res.status(401).json({ error: "Invalid token" });
     }

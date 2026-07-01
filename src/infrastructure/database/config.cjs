@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const shouldUseSSL =
   process.env.DB_SSL === "true" ||
   (process.env.DATABASE_URL || "").includes("render.com");

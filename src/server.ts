@@ -31,7 +31,7 @@ class Server {
       this.app.listen(this.PORT, () => {
         console.log(`Server is running on port ${this.PORT}`);
         console.log(
-          `Swagger UI available at http://localhost:${this.PORT}/api-docs`,
+          `Swagger UI available at http://localhost:${this.PORT}/api-docs`
         );
       });
     } catch (error) {
@@ -50,9 +50,9 @@ class Server {
   }
 
   setupMiddlewares(): void {
+    this.app.use(RequestLoggerMiddleware);
     this.app.use(corsMiddleware);
     this.app.use(express.json());
-    this.app.use(RequestLoggerMiddleware);
     this.app.use(metricsMiddleware);
   }
 
@@ -78,7 +78,6 @@ class Server {
         },
       } as Partial<ApiReferenceConfiguration>)
     );
-    
   }
 
   setupErrorHandling(): void {
