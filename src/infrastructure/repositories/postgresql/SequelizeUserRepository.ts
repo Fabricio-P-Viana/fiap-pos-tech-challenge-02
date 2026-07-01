@@ -45,7 +45,6 @@ export default class SequelizeUserRepository implements UserRepository {
     const users = await this.userModel.findAll({
       where: { role },
     });
-
     return users.map((u) => this.mapToDomain(u));
   }
 

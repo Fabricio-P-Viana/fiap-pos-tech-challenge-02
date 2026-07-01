@@ -9,6 +9,7 @@ export class FindUsersByRoleUseCase {
   }
 
   async execute(role: UserRole): Promise<User[]> {
+    //console.log(`Executing FindUsersByRoleUseCase with role: ${role}`);
     return this.userRepository.findByRole(role);
   }
 }
