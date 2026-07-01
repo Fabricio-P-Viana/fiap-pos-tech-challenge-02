@@ -1,6 +1,6 @@
 import { UserRepository } from "../../../domain/repositories/UserRepository.ts";
 import type { UserData } from "../../../domain/entities/User.ts";
-import { User } from "../../../domain/entities/User.ts";
+import { User, UserRole } from "../../../domain/entities/User.ts";
 import type { UserModel } from "../../database/models/UserModel.ts";
 import type { ModelStatic } from "sequelize";
 
@@ -39,6 +39,14 @@ export default class SequelizeUserRepository implements UserRepository {
     if (!user) return null;
 
     return this.mapToDomain(user);
+  }
+
+  async findByRole(role: UserRole): Promise<User[]> {
+    const users = await this.userModel.findAll({
+      where: { role },
+    });
+
+    return users.map((u) => this.mapToDomain(u));
   }
 
   async update(id: number, userData: Partial<UserData>): Promise<User | null> {
